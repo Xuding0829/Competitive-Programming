@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+
+using i64 = long long;
+
+constexpr int inf = 0x3f3f3f3f;
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, m, s;
+    std::cin >> n >> m >> s;
+    s--;
+
+    std::vector<std::pair<int, int>> adj[n];
+    for (int i = 0; i < m; i++)
+    {
+        int u, v, w;
+        std::cin >> u >> v >> w;
+        u--, v--;
+        adj[u].push_back({v, w});
+    }
+
+    std::vector<bool> st(n);
+    std::vector<int> dis(n, inf);
+    std::function<void(int)> dijkstra = [&](int s)
+    {
+        dis[s] = 0;
+        std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> h;
+        h.push({0, s});
+        while (h.size())
+        {
+            auto u = h.top().second;
+            h.pop();
+
+            if (st[u])
+                continue;
+            st[u] = true;
+
+            for (auto [v, w] : adj[u])
+            {
+                if (dis[v] > dis[u] + w)
+                {
+                    dis[v] = dis[u] + w;
+                    h.push({dis[v], v});
+                }
+            }
+        }
+    };
+
+    dijkstra(s);
+
+    for (int i = 0; i < n; i++)
+    {
+        if (dis[i] != inf)
+            std::cout << dis[i] << ' ';
+        else
+            std::cout << INT_MAX << ' ';
+    }
+
+    return 0;
+}
